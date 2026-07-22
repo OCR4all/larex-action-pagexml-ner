@@ -1,0 +1,52 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "larex-action-pagexml-ner"
+version = "0.1.0"
+description = "Reference LAREX postprocessing Action for PAGE XML text and named-entity exports."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [
+  { name = "OCR4all" }
+]
+dependencies = [
+  "larex-action-sdk[fastapi]>=0.10.1,<0.11",
+  "lxml>=5,<7",
+  "pydantic>=2.10,<3",
+  "uvicorn[standard]>=0.51,<0.52",
+]
+
+[project.optional-dependencies]
+ner = [
+  "spacy>=3.8,<3.9",
+  "en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl#sha256=1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85",
+]
+test = [
+  "pytest>=8,<9",
+  "pytest-asyncio>=1,<2",
+  "ruff>=0.12,<1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/larex_action_pagexml_ner"]
+
+[tool.hatch.build]
+exclude = ["/main.py"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

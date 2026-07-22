@@ -1,0 +1,73 @@
+version: 1
+id: pagexml-text-ner-export
+name: PAGE XML Text + NER Export
+description: Exports reading-order-aware text and named entities from PAGE XML as durable project files.
+category: POSTPROCESSING
+targets:
+  - PAGE
+
+endpoint:
+  url: https://pagexml-ner.example.org/dispatch
+  healthUrl: https://pagexml-ner.example.org/health
+  timeoutSeconds: 30
+  auth:
+    type: hmac
+    secretRef: pagexml-text-ner-export-v1
+
+access:
+  execute: CURATOR
+
+locking:
+  mode: PAGES
+
+inputs:
+  images: false
+  xml: true
+
+outputs:
+  xml:
+    enabled: false
+  images:
+    enabled: false
+  files:
+    enabled: true
+
+concurrency:
+  maxActiveRuns: 1
+  scope: PROJECT
+
+runtime:
+  model:
+    name: en_core_web_sm
+    optional: true
+
+parameters:
+  preserveLineBreaks:
+    type: boolean
+    default: true
+    description: Preserve PAGE XML text-line boundaries in per-page text files.
+  dehyphenate:
+    type: boolean
+    default: true
+    description: Join a line-ending hyphen when the following line starts with a lowercase letter.
+  unicodeNormalization:
+    type: string
+    default: NFC
+    description: Unicode normalization mode; supported values are none, NFC, and NFKC.
+  enableNer:
+    type: boolean
+    default: true
+    description: Run the configured spaCy named-entity recognition model.
+  nerModel:
+    type: string
+    default: en_core_web_sm
+    description: Installed spaCy package name or mounted model path.
+  entityLabels:
+    type: string
+    default: PERSON,ORG,GPE,LOC,DATE
+    description: Optional comma-separated entity-label allowlist; leave empty to include all labels.
+  continueOnInvalidXml:
+    type: boolean
+    default: false
+    description: Skip invalid pages and record warnings instead of failing the complete run.
+
