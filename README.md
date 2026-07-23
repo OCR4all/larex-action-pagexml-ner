@@ -42,6 +42,7 @@ Register [action/pagexml-text-ner-export.yaml](action/pagexml-text-ner-export.ya
 endpoint:
   url: https://pagexml-ner.example.org/dispatch
   healthUrl: https://pagexml-ner.example.org/health
+  preflightUrl: https://pagexml-ner.example.org/preflight
   auth:
     type: hmac
     secretRef: pagexml-text-ner-export-v1
@@ -77,7 +78,12 @@ Processor environment:
 | `LAREX_MAX_CONCURRENT_RUNS` | `1` | Runs admitted concurrently by one instance. |
 | `LAREX_MAX_XML_BYTES` | `52428800` | Per-page PAGE XML size guard. |
 
-`/health` is the liveness endpoint. `/ready` returns `503` while the preload model is loading, if loading failed, or while all configured run slots are occupied. A successful readiness response includes the warmed model name. Prefixed readiness routes follow `LAREX_ACTION_ROUTE_PREFIXES` as well.
+`/health` is the liveness endpoint. `/preflight` is the authenticated LAREX
+configuration check; it verifies the shared HMAC secret and processor id and
+reports protocol and result capabilities. `/ready` returns `503` while the preload
+model is loading, if loading failed, or while all configured run slots are
+occupied. A successful readiness response includes the warmed model name.
+Prefixed routes follow `LAREX_ACTION_ROUTE_PREFIXES` as well.
 
 ## Run locally
 

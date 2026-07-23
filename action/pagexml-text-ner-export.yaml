@@ -9,6 +9,7 @@ targets:
 endpoint:
   url: https://pagexml-ner.example.org/dispatch
   healthUrl: https://pagexml-ner.example.org/health
+  preflightUrl: https://pagexml-ner.example.org/preflight
   timeoutSeconds: 30
   auth:
     type: hmac
@@ -70,4 +71,3 @@ parameters:
     type: boolean
     default: false
     description: Skip invalid pages and record warnings instead of failing the complete run.
-
