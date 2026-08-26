@@ -50,7 +50,9 @@ endpoint:
 
 Create the endpoint secret under **Admin → Actions → Endpoint Secrets**, then pass the one-time revealed value to the processor as `LAREX_DISPATCH_HMAC_SECRET`.
 
-This processor requires a LAREX server advertising `capabilities.customFileResults` and `larex-action-sdk` `>=0.10.1,<0.11`.
+The supplied definition disables image input and requires PAGE XML for every selected page. LAREX therefore excludes pages without XML before dispatch instead of sending unusable input to the processor.
+
+This processor requires a LAREX server advertising `capabilities.customFileResults` and `larex-action-sdk` `>=0.11.0,<0.12`.
 
 ## Configuration
 

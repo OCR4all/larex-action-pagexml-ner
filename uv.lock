@@ -360,7 +360,7 @@ wheels = [
 
 [[package]]
 name = "larex-action-pagexml-ner"
-version = "0.1.0"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "larex-action-sdk", extra = ["fastapi"] },
