@@ -52,7 +52,7 @@ Create the endpoint secret under **Admin → Actions → Endpoint Secrets**, the
 
 The supplied definition disables image input and requires PAGE XML for every selected page. LAREX therefore excludes pages without XML before dispatch instead of sending unusable input to the processor.
 
-This processor requires a LAREX server advertising `capabilities.customFileResults` and `larex-action-sdk` `>=0.11.0,<0.12`.
+This processor requires a LAREX server advertising `capabilities.customFileResults` and `larex-action-sdk` `>=0.12.0,<0.13`.
 
 ## Configuration
 
