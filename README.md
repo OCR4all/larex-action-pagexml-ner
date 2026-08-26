@@ -104,6 +104,12 @@ uv run pytest
 uv run ruff check .
 ```
 
+To prepare and publish a release from a clean `main` checkout, run
+`./scripts/release.sh 0.3.0`. The helper updates `pyproject.toml` and
+`uv.lock`, runs the checks, creates a conventional release commit, pushes the
+`v0.3.0` tag, and creates the GitHub release. Release candidate versions such
+as `0.3.0rc1` are also accepted.
+
 ## Docker
 
 ```bash
