@@ -383,7 +383,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "en-core-web-sm", marker = "extra == 'ner'", url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" },
-    { name = "larex-action-sdk", extras = ["fastapi"], specifier = ">=0.13.0,<0.14" },
+    { name = "larex-action-sdk", extras = ["fastapi"], specifier = ">=0.14.0,<0.15" },
     { name = "lxml", specifier = ">=5,<7" },
     { name = "pydantic", specifier = ">=2.10,<3" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8,<9" },
@@ -396,15 +396,15 @@ provides-extras = ["ner", "test"]
 
 [[package]]
 name = "larex-action-sdk"
-version = "0.13.0"
+version = "0.14.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/13/66/bd8a3ad1391da99cc75f2a0c101a7bf6f88b9e108f50b386d09ef838a9a5/larex_action_sdk-0.13.0.tar.gz", hash = "sha256:ac547f906ec08ab5eb8da5c8f24c853ba93c09367c21556a1001ff1f38b433cd", size = 48964, upload-time = "2026-08-31T13:23:25.364Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b6/c7/b4e93592fbca43b3c327a98f9e2b00490a7afbf8b29b3fd1435160b5ae7c/larex_action_sdk-0.14.0.tar.gz", hash = "sha256:ea3d805d627a1aafbc55668d7f64551f90bcadf5bc453ccaa0b782138a0fab0b", size = 51352, upload-time = "2026-09-01T08:05:19.975Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c3/d2/0dfe428f83e8705aacf4959c0535aaea0415bfba2c7682c94ef6d35a28ba/larex_action_sdk-0.13.0-py3-none-any.whl", hash = "sha256:d625e7acc5220d449afeadf941f8cc324e944f61eb3070e3821e455fbb133d2b", size = 23660, upload-time = "2026-08-31T13:23:24.317Z" },
+    { url = "https://files.pythonhosted.org/packages/7c/ea/dfa2ddf53ebccabe113696f726aa14c614371e81ca5e3b80e94d3a60c9cb/larex_action_sdk-0.14.0-py3-none-any.whl", hash = "sha256:7ab817e427bc8787a7394541d1c58e3b740d36302ffb94ebd5e44bd6a26d64fb", size = 25382, upload-time = "2026-09-01T08:05:18.54Z" },
 ]
 
 [package.optional-dependencies]
