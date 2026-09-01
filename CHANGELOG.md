@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v0.4.0 (2026-09-01)
+
+### Bug Fixes
+
+- Require parameter discovery SDK
+  ([`69e04d4`](https://github.com/OCR4all/larex-action-pagexml-ner/commit/69e04d48a4f511e63cf71513b103a512abefc010))
+
+### Features
+
+- Discover available NER models
+  ([`c6d828a`](https://github.com/OCR4all/larex-action-pagexml-ner/commit/c6d828afca3538617f86901fb4188c90080443ee))
+
+
 ## v0.3.0 (2026-08-26)
 
 ### Chores
