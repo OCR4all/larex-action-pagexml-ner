@@ -19,12 +19,26 @@ from typing import Literal, Protocol
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from larex_actions import ActionContext
+from larex_actions import ActionContext, ParameterChoice
 from larex_actions.fastapi import create_larex_action_app
 from lxml import etree
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from . import __version__
+
+
+def configure_sdk_transport_logging() -> None:
+    enabled = os.getenv("LAREX_SDK_TRANSPORT_LOGGING", "").strip().lower()
+    if enabled not in {"1", "true", "yes", "on"}:
+        return
+    sdk_logger = logging.getLogger("larex_actions.transport")
+    sdk_logger.setLevel(logging.DEBUG)
+    if not sdk_logger.hasHandlers():
+        sdk_logger.addHandler(logging.StreamHandler())
+        sdk_logger.propagate = False
+
+
+configure_sdk_transport_logging()
 
 
 def positive_int_env(name: str, default: int) -> int:
@@ -43,6 +57,7 @@ def positive_int_env(name: str, default: int) -> int:
 PROCESSOR_ID = os.getenv("LAREX_PROCESSOR_ID", "pagexml-text-ner-export")
 DISPATCH_SECRET_ENV = "LAREX_DISPATCH_HMAC_SECRET"
 PRELOAD_NER_MODEL = os.getenv("LAREX_PRELOAD_NER_MODEL", "en_core_web_sm").strip()
+NER_MODEL_DIRECTORY = os.getenv("LAREX_NER_MODEL_DIRECTORY", "").strip()
 MAX_CONCURRENT_RUNS = positive_int_env("LAREX_MAX_CONCURRENT_RUNS", 1)
 MAX_XML_BYTES = positive_int_env("LAREX_MAX_XML_BYTES", 50 * 1024 * 1024)
 RUN_SEMAPHORE = asyncio.Semaphore(MAX_CONCURRENT_RUNS)
@@ -61,7 +76,7 @@ class ExportParameters(BaseModel):
         default="NFC", alias="unicodeNormalization"
     )
     enable_ner: bool = Field(default=False, alias="enableNer")
-    ner_model: str = Field(default="", alias="nerModel", max_length=256)
+    ner_model: str = Field(default="", alias="nerModel", max_length=1024)
     entity_labels: str = Field(default="", alias="entityLabels", max_length=1024)
     continue_on_invalid_xml: bool = Field(default=False, alias="continueOnInvalidXml")
 
@@ -169,6 +184,45 @@ class SpacyNerEngine:
 @lru_cache(maxsize=4)
 def get_ner_engine(model_name: str) -> NerEngine:
     return SpacyNerEngine(model_name)
+
+
+def discover_spacy_models(
+    model_directory: str | Path | None = NER_MODEL_DIRECTORY,
+) -> list[ParameterChoice]:
+    try:
+        import spacy
+    except ImportError as exc:
+        raise RuntimeError("spaCy is required to discover NER models") from exc
+
+    choices: dict[str, ParameterChoice] = {}
+    for model_name in spacy.util.get_installed_models():
+        choices[model_name] = ParameterChoice(
+            value=model_name,
+            label=model_name.replace("_", " "),
+        )
+    if PRELOAD_NER_MODEL:
+        choices.setdefault(
+            PRELOAD_NER_MODEL,
+            ParameterChoice(
+                value=PRELOAD_NER_MODEL,
+                label=Path(PRELOAD_NER_MODEL).name.replace("_", " "),
+            ),
+        )
+
+    if model_directory:
+        root = Path(model_directory).expanduser().resolve()
+        if root.is_dir():
+            for config_path in root.glob("**/config.cfg"):
+                model_path = config_path.parent.resolve()
+                if not model_path.is_relative_to(root):
+                    continue
+                value = str(model_path)
+                label = str(model_path.relative_to(root))
+                choices[value] = ParameterChoice(value=value, label=label)
+                if len(choices) >= 1_000:
+                    break
+
+    return sorted(choices.values(), key=lambda choice: (choice.label.casefold(), str(choice.value)))
 
 
 NER_PRELOAD_STATE = NerPreloadState.configured(PRELOAD_NER_MODEL)
@@ -680,6 +734,7 @@ app = create_larex_action_app(
     dispatch_secret_env=DISPATCH_SECRET_ENV,
     handler=process_run,
     app=fastapi_app,
+    parameter_value_providers={"spacyModels": discover_spacy_models},
 )
 
 

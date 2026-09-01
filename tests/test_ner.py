@@ -1,7 +1,7 @@
 import pytest
 
 from larex_action_pagexml_ner import main
-from larex_action_pagexml_ner.main import NerPreloadState, get_ner_engine
+from larex_action_pagexml_ner.main import NerPreloadState, discover_spacy_models, get_ner_engine
 
 
 def test_bundled_english_model_loads_and_filters_labels():
@@ -79,3 +79,35 @@ def test_readiness_reports_preload_failure_without_exposing_error():
         503,
         {"status": "model-unavailable", "model": "fake-model"},
     )
+
+
+def test_discovers_installed_and_nested_mounted_models(monkeypatch, tmp_path):
+    spacy = pytest.importorskip("spacy")
+    monkeypatch.setattr(spacy.util, "get_installed_models", lambda: ["installed_model"])
+    model_dir = tmp_path / "training-run" / "model-best"
+    model_dir.mkdir(parents=True)
+    (model_dir / "config.cfg").write_text("[nlp]\n", encoding="utf-8")
+
+    choices = discover_spacy_models(tmp_path)
+
+    values = {choice.value: choice.label for choice in choices}
+    assert values["installed_model"] == "installed model"
+    assert values[str(model_dir.resolve())] == "training-run/model-best"
+    assert [choice.label for choice in choices] == sorted(
+        [choice.label for choice in choices], key=str.casefold
+    )
+
+
+def test_model_discovery_does_not_follow_paths_outside_configured_root(monkeypatch, tmp_path):
+    spacy = pytest.importorskip("spacy")
+    monkeypatch.setattr(spacy.util, "get_installed_models", lambda: [])
+    root = tmp_path / "models"
+    outside = tmp_path / "outside"
+    root.mkdir()
+    outside.mkdir()
+    (outside / "config.cfg").write_text("[nlp]\n", encoding="utf-8")
+    (root / "escaped").symlink_to(outside, target_is_directory=True)
+
+    values = {choice.value for choice in discover_spacy_models(root)}
+
+    assert str(outside.resolve()) not in values

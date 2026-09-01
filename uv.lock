@@ -383,7 +383,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "en-core-web-sm", marker = "extra == 'ner'", url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" },
-    { name = "larex-action-sdk", extras = ["fastapi"], specifier = ">=0.12.0,<0.13" },
+    { name = "larex-action-sdk", extras = ["fastapi"], specifier = ">=0.13.0,<0.14" },
     { name = "lxml", specifier = ">=5,<7" },
     { name = "pydantic", specifier = ">=2.10,<3" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8,<9" },
@@ -396,15 +396,15 @@ provides-extras = ["ner", "test"]
 
 [[package]]
 name = "larex-action-sdk"
-version = "0.12.0"
+version = "0.13.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1b/ce/4fc6424a3854bfb44704d33543323e5c5536cbc23079189c8d88f4489630/larex_action_sdk-0.12.0.tar.gz", hash = "sha256:5dbaeee835f15246155fe75cb7101b47baeefd446bf0d73f3f9ed7b357bb5a77", size = 42149, upload-time = "2026-08-26T10:54:09.681Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/13/66/bd8a3ad1391da99cc75f2a0c101a7bf6f88b9e108f50b386d09ef838a9a5/larex_action_sdk-0.13.0.tar.gz", hash = "sha256:ac547f906ec08ab5eb8da5c8f24c853ba93c09367c21556a1001ff1f38b433cd", size = 48964, upload-time = "2026-08-31T13:23:25.364Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/f0/b9684a62eda4d1c50b3ca9fe08ba31561e3fdb70483b1d746516bbad4bb3/larex_action_sdk-0.12.0-py3-none-any.whl", hash = "sha256:61134fc7bc229f01e69e60eebcd22e2321c3ae5b8007d4b097492d3d58467df1", size = 21259, upload-time = "2026-08-26T10:54:08.61Z" },
+    { url = "https://files.pythonhosted.org/packages/c3/d2/0dfe428f83e8705aacf4959c0535aaea0415bfba2c7682c94ef6d35a28ba/larex_action_sdk-0.13.0-py3-none-any.whl", hash = "sha256:d625e7acc5220d449afeadf941f8cc324e944f61eb3070e3821e455fbb133d2b", size = 23660, upload-time = "2026-08-31T13:23:24.317Z" },
 ]
 
 [package.optional-dependencies]

@@ -52,7 +52,8 @@ Create the endpoint secret under **Admin → Actions → Endpoint Secrets**, the
 
 The supplied definition disables image input and requires PAGE XML for every selected page. LAREX therefore excludes pages without XML before dispatch instead of sending unusable input to the processor.
 
-This processor requires a LAREX server advertising `capabilities.customFileResults` and `larex-action-sdk` `>=0.12.0,<0.13`.
+This processor requires a LAREX server advertising `capabilities.customFileResults`
+and dynamic parameter-value discovery, plus `larex-action-sdk` `>=0.13.0,<0.14`.
 
 ## Configuration
 
@@ -76,7 +77,9 @@ Processor environment:
 | `LAREX_PROCESSOR_ID` | `pagexml-text-ner-export` | Expected processor id. |
 | `LAREX_ALLOWED_CALLBACK_ORIGINS` | SDK default | Optional comma-separated callback origins. |
 | `LAREX_ACTION_ROUTE_PREFIXES` | empty | Optional route prefixes exposed by the SDK app. |
+| `LAREX_SDK_TRANSPORT_LOGGING` | disabled | Set to `true` to log SDK pulls, heartbeats, downloads, uploads, retries, and failures locally. |
 | `LAREX_PRELOAD_NER_MODEL` | `en_core_web_sm` | Model loaded and warmed during startup; empty disables preloading. |
+| `LAREX_NER_MODEL_DIRECTORY` | empty | Optional root containing trained spaCy model directories. Every nested directory containing `config.cfg` becomes an allowed `nerModel` choice. |
 | `LAREX_MAX_CONCURRENT_RUNS` | `1` | Runs admitted concurrently by one instance. |
 | `LAREX_MAX_XML_BYTES` | `52428800` | Per-page PAGE XML size guard. |
 
@@ -86,6 +89,16 @@ reports protocol and result capabilities. `/ready` returns `503` while the prelo
 model is loading, if loading failed, or while all configured run slots are
 occupied. A successful readiness response includes the warmed model name.
 Prefixed routes follow `LAREX_ACTION_ROUTE_PREFIXES` as well.
+
+The Action exposes installed spaCy packages and models below
+`LAREX_NER_MODEL_DIRECTORY` through its authenticated `/parameter-values` route.
+LAREX refreshes this list in the run dialog and validates it again at submission,
+so a training job can publish a model below the mounted directory without adding
+another Action definition.
+
+SDK transport logging is written only to the processor's local stderr/stdout log
+stream; it does not send additional log heartbeats to LAREX. It describes SDK
+calls, not PAGE XML parsing or NER progress between calls.
 
 ## Run locally
 
@@ -122,6 +135,9 @@ docker build -t larex-action-pagexml-ner .
 docker run --rm -p 9000:9000 \
   -e LAREX_DISPATCH_HMAC_SECRET='secret-from-larex' \
   -e LAREX_ALLOWED_CALLBACK_ORIGINS='https://larex.example.org' \
+  -e LAREX_SDK_TRANSPORT_LOGGING=true \
+  -e LAREX_NER_MODEL_DIRECTORY=/models \
+  -v /srv/larex-models:/models:ro \
   larex-action-pagexml-ner
 ```
 

@@ -10,6 +10,7 @@ endpoint:
   url: https://pagexml-ner.example.org/dispatch
   healthUrl: https://pagexml-ner.example.org/health
   preflightUrl: https://pagexml-ner.example.org/preflight
+  parameterValuesUrl: https://pagexml-ner.example.org/parameter-values
   timeoutSeconds: 30
   auth:
     type: hmac
@@ -57,6 +58,14 @@ parameters:
     type: string
     default: NFC
     description: Unicode normalization mode; supported values are none, NFC, and NFKC.
+    allowedValues:
+      values:
+        - value: none
+          label: Disabled
+        - value: NFC
+          label: NFC
+        - value: NFKC
+          label: NFKC
   enableNer:
     type: boolean
     default: true
@@ -65,6 +74,8 @@ parameters:
     type: string
     default: en_core_web_sm
     description: Installed spaCy package name or mounted model path.
+    allowedValues:
+      provider: spacyModels
   entityLabels:
     type: string
     default: PERSON,ORG,GPE,LOC,DATE
